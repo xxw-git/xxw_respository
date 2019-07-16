@@ -2,6 +2,7 @@ package com.lc.xxw.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lc.xxw.common.utils.RSAUtils;
+import com.lc.xxw.common.utils.ReadProperties;
 import com.lc.xxw.common.utils.RedisUtils;
 import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.User;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 
@@ -110,6 +112,9 @@ public class LoginController extends BaseController {
         userName.append("ExcessiveCount");
         String accountKey = userName.toString();
 
+        Properties pro = ReadProperties.getProperties();
+        String loginCount = pro.getProperty("login.count");
+
         if(null == redisUtils.get(accountKey)){
             //过期时间设置30分钟
             redisUtils.setForTimeCustom(accountKey, "1",30, TimeUnit.MINUTES);
@@ -123,7 +128,7 @@ public class LoginController extends BaseController {
             excessiveInfo = "账号密码错误3次,再错2次账号将被禁用！";
         }
         /**登录错误5次,该账号将被禁用*/
-        if(Integer.parseInt(redisUtils.get(accountKey))==5){
+        if(Integer.parseInt(redisUtils.get(accountKey))==Integer.parseInt(loginCount)){
             User user = userService.findUserByUsername(account);
             if(null!=user){
                 userService.updateDisabled(user.getId(), StatusConstants.FREEZED);
