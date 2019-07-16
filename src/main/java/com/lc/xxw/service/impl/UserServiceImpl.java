@@ -62,9 +62,6 @@ public class UserServiceImpl implements UserService {
 
     public JSONObject save(User user){
         JSONObject result = new JSONObject();
-        //String salt = CommonUtils.getRandomString(6);
-        //user.setPasswordSalt(salt);
-        //user.setPassword(ShiroUtils.getStrByMD5(user.getPassword(),salt));
         Boolean isRepeat = repeatByUserName(user.getId(),user.getLoginAccount());
         if(isRepeat){
             result.put("status",500);

@@ -28,12 +28,7 @@ public class ShiroUtils {
      * @return
      */
     public static String getStrByMD5(String password,String salt){
-        return new Md5Hash(password,salt).toString();
-    }
-
-    // 测试使用
-    public static String getStrByMD5(String password){
-        return new Md5Hash(password,"admin").toString();
+        return new Md5Hash(password,salt,10).toString();
     }
 
     /**

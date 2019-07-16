@@ -20,6 +20,7 @@
     <%--引入js--%>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/common/jquery/jquery1.8.3.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/common/layer/layer.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/jsencrypt.min.js"></script>
 </head>
 
 <body>
@@ -93,7 +94,12 @@
             layer.alert("密码不能为空！", {icon: 6});
             return false;
         }
-        var data = {username:username,password:password,rememberMe:$("#rememberMe").is(':checked')};
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey("MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKxo5a4/U+BOoKgPasR3S1RM6fNw" +
+            "Qwrh1XTS45iLMYH8hw7Z+bWrXh10IRoBjdKyUk1ep1khO+ikr3R9APz4EJ8CAwEAAQ==");
+        var enpwd = encrypt.encrypt(password);
+        var pwd = encodeURI(enpwd).replace(/\+/g, '%2B');
+        var data = {username:username,password:pwd,rememberMe:$("#rememberMe").is(':checked')};
         var load = layer.load();
 
         $.ajax({
@@ -105,8 +111,8 @@
                 layer.msg('开始登录...');
             },
             success:function(result){
+                layer.close(load);
                 if(result && result.status == 200){
-                    layer.close(load);
                     layer.msg(result.message);
                     setTimeout(function(){
                         window.location.href= "/web/index.do";
@@ -118,6 +124,7 @@
                 }
             },
             error:function(e){
+                layer.close(load);
                 console.log("登录失败")
                 console.log(e,e.message);
                 layer.msg('登录异常！',new Function());

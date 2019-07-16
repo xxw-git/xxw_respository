@@ -34,7 +34,6 @@ public class UserServiceTest {
         user.setId("A691331E688A44338CC1E06F7022E5E1");
         user.setLoginAccount("admin");
         user.setPassword(ShiroUtils.getStrByMD5("123",user.getLoginAccount()));
-        user.setPasswordSalt(user.getLoginAccount());
         user.setStatus(StatusConstants.OK);
         user.setUserName("测试用户名");
         user.setLxfs("17600145358");

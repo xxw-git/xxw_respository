@@ -1,6 +1,7 @@
 package com.lc.xxw.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.lc.xxw.common.utils.RSAUtils;
 import com.lc.xxw.common.utils.RedisUtils;
 import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.User;
@@ -30,16 +31,33 @@ public class LoginController extends BaseController {
     @Autowired
     private RedisUtils redisUtils;
 
+    private static final String PRIVATE_KEY = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArGjlrj9T4E6gqA9qxHdLVEzp83BD" +
+            "CuHVdNLjmIsxgfyHDtn5tateHXQhGgGN0rJSTV6nWSE76KSvdH0A/PgQnwIDAQABAkBkXrj/xPxG" +
+            "hF/BFyCX+b8P96rnPv64shp7ZV58auRKgEp4PVEu44lu/7hCJxcXS7lQTwitYED7/hzKk9E/Zxv5" +
+            "AiEA9QmSQbnmiYg5wLop77DSqjhrYCApxvISfTGgPKTZBQ0CIQC0H4RaQKWpPZVQIXjaauJv4wbg" +
+            "sZHLPIimUrhmoGkZWwIgCTSI2AtBy9zgPos/1A9Seq6P6haLOzwQ0b8xg9W1iWkCIEZpZ6CsUtYU" +
+            "x9CaNRcU302jruWZJIgRMs3p2kHsBQmvAiEA7OaHNyqMruM/jCKhnc8bD9bA7+N1tb14IElJqUavLGY=";
+
     @RequestMapping(method = RequestMethod.POST,value = "/submitLogin.do")
     @ResponseBody
-    public JSONObject login(@RequestParam("username")String username, @RequestParam("password")String password
-            , @RequestParam("rememberMe")boolean rememberMe){
+    public JSONObject login(@RequestParam("username")String username, @RequestParam("password")String password,
+            @RequestParam("rememberMe")boolean rememberMe){
         JSONObject object = new JSONObject();
         // 1.获取Subject主体对象
         Subject subject = SecurityUtils.getSubject();
+        String newPwd = null;
+        logger.info("客户端密码：" + password);
+        try{
+            newPwd = password.replace("%2B","+");
+            logger.info("客户端处理后的密码：" + newPwd);
+            newPwd = RSAUtils.decrypt(newPwd,PRIVATE_KEY);
+            logger.info("明文是：" + newPwd);
+        }catch (Exception e) {
+            logger.info("解密失败");
+        }
+
         // 2.封装用户数据
-        //TODO 密码传输时是明文，需要加密
-        UsernamePasswordToken token = new UsernamePasswordToken(username,ShiroUtils.getStrByMD5(password));
+        UsernamePasswordToken token = new UsernamePasswordToken(username,ShiroUtils.getStrByMD5(newPwd,username));
         // 3.执行登录，进入自定义Realm类中
         try{
             token.setRememberMe(rememberMe);
