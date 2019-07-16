@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <!-- 配置安全管理器securityManager， 缓存技术: 缓存管理 realm:负责获取处理数据 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="myRealm" />
+        <property name="cacheManager" ref="shrioCacheManager" />
+        <property name="rememberMeManager" ref="rememberMeManager"/>
+    </bean>
+
+    <!-- 项目自定义的Realm,从数据库中获取用户的安全数据 -->
+    <bean id="myRealm" class="com.lc.xxw.shiro.MyRealm">
+        <!-- 配置缓存管理器-->
+        <property name="cacheManager" ref="shrioCacheManager" />
+    </bean>
+
+    <!-- 用户授权信息Cache -->
+    <!--<bean id="shrioCacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />-->
+    <bean id="shrioCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager" >
+        <property name="cacheManager" ref="ehcheManageFactory"/>
+    </bean>
+
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+    <!-- shiro的核心配置:  配置shiroFileter id名必须与web.xml中的filtername保持一致 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!-- Shiro的核心安全接口,这个属性是必须的 -->
+        <property name="securityManager" ref="securityManager" />
+        <!-- 身份认证失败，则跳转到登录页面的配置 -->
+        <property name="loginUrl" value="/login" />
+        <!-- 身份认证成功，则跳转到系统首页 -->
+        <property name="successUrl" value="/index.do" />
+        <!-- 权限认证失败，则跳转到指定页面 -->
+        <property name="unauthorizedUrl" value="/unauthorized.do" />
+        <property name="filters">
+            <map>
+                <!--退出过滤器-->
+                <entry key="logout" value-ref="systemLogoutFilter" />
+                <entry key="rememberMe" value-ref="RememberMeFilter"></entry>
+                <!-- 并发登录控制过滤器,暂时关闭该功能，允许一个账户登录多个客户端 -->
+               <!-- <entry key="kickout" value-ref="KickoutSessionControlFilter"/>-->
+            </map>
+        </property>
+        <!-- shiro过滤器的具体配置 -->
+        <property name="filterChainDefinitions">
+            <value>
+                <!--anon 表示匿名访问，不需要认证以及授权-->
+                /css/** = anon
+                /fonts/** = anon
+                /images/** = anon
+                <!--过滤静态资源 css、fonts、images-->
+                <!--/public/** = anon-->
+                /js/** = anon
+                /*.ico = anon
+                /login.jsp = anon
+                /submitLogin.do = anon
+                <!-- 请求logout.action地址，shiro去清除session -->
+                /logout=logout
+                <!--authc表示需要认证 没有进行身份认证是不能进行访问的-->
+                /index.jsp = authc
+                <!--authc 是认证过，user是登录过，如果开启了Readmemberme功能的话，
+                user也是可以通过的，而authc通过不了,所以authc来校验一些关键操作 -->
+                /**=user,rememberMe
+            </value>
+        </property>
+    </bean>
+
+<!--自定义LogoutFilter,登出-->
+    <bean id="systemLogoutFilter" class="com.lc.xxw.shiro.SystemLogoutFilter">
+        <property name="redirectUrl" value="/login"/>
+    </bean>
+
+    <!-- sessionIdCookie：maxAge=-1表示浏览器关闭时失效此Cookie -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="-1"/>
+    </bean>
+
+    <!-- 用户信息记住我功能的相关配置 -->
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe"/>
+        <property name="httpOnly" value="true"/>
+        <!-- 配置存储rememberMe Cookie的domain为 一级域名		这里如果配置需要和Session回话一致更好。-->
+        <property name="maxAge" value="604800"/><!-- 记住我==保留Cookie有效7天 -->
+    </bean>
+
+    <!-- rememberMe管理器 -->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <!-- rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位）-->
+        <property name="cipherKey"
+                  value="#{T(org.apache.shiro.codec.Base64).decode('3AvVhmFLUs0KTA3Kprsdag==')}"/>
+        <property name="cookie" ref="rememberMeCookie"/>
+    </bean>
+
+    <!-- 记住我功能设置session的Filter -->
+    <bean id="RememberMeFilter" class="com.lc.xxw.shiro.RememberMeFilter" />
+
+    <!-- rememberMeParam请求参数是 boolean 类型，true 表示 rememberMe -->
+    <!-- shiro规定记住我功能最多得user级别的，不能到authc级别.所以如果使用authc，需打开此配置或重写实现rememberMe的过滤器 -->
+    <!-- <bean id="formAuthenticationFilter" class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+        <property name="rememberMeParam" value="rememberMe"/>
+    </bean> -->
+
+    <!--不允许多个客户端使用同一个账号登录-->
+    <bean id="KickoutSessionControlFilter" class="com.lc.xxw.shiro.KickoutSessionControlFilter" />
+
+</beans>
