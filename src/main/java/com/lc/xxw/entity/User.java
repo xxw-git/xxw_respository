@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
-@Table(name="T_USER")
+@Table(name="SYS_USER")
 @Data
 public class User implements Serializable {
 

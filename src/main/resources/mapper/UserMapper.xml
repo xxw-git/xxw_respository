@@ -4,23 +4,23 @@
 
     <!-- 根据用户ID查询角色 -->
     <select id="findRolesByUserId" parameterType="java.lang.String" resultType="java.lang.String">
- 		SELECT DISTINCT r.name FROM t_user_roles u,t_role r
+ 		SELECT DISTINCT r.name FROM sys_user_roles u,t_role r
  		WHERE u.role_id=r.id AND u.user_id=#{userId}
  	</select>
 
     <!-- 根据用户ID查询权限信息 -->
     <select id="findPermissionsByUserId" parameterType="java.lang.String" resultType="java.lang.String">
- 		SELECT DISTINCT per.permission FROM t_permission per
+ 		SELECT DISTINCT per.permission FROM sys_permission per
 		WHERE per.id IN
-			(SELECT r.per_id FROM t_role_permission r
+			(SELECT r.per_id FROM sys_role_permission r
 				WHERE EXISTS
-				(SELECT u.role_id FROM t_user_roles u
+				(SELECT u.role_id FROM sys_user_roles u
 			    	WHERE u.user_id = #{userId}))
  	</select>
 
 	<!--查询用户名是否重复-->
 	<select id="repeatByUserName" parameterType="java.lang.String" resultType="com.lc.xxw.entity.User">
- 		SELECT * FROM t_user u
+ 		SELECT * FROM sys_user u
  		WHERE u.id != #{userId} AND u.login_account=#{account}
  	</select>
 
