@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.security.interfaces.RSAPrivateKey;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -33,12 +34,18 @@ public class LoginController extends BaseController {
     @Autowired
     private RedisUtils redisUtils;
 
-    private static final String PRIVATE_KEY = "MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEArGjlrj9T4E6gqA9qxHdLVEzp83BD" +
-            "CuHVdNLjmIsxgfyHDtn5tateHXQhGgGN0rJSTV6nWSE76KSvdH0A/PgQnwIDAQABAkBkXrj/xPxG" +
-            "hF/BFyCX+b8P96rnPv64shp7ZV58auRKgEp4PVEu44lu/7hCJxcXS7lQTwitYED7/hzKk9E/Zxv5" +
-            "AiEA9QmSQbnmiYg5wLop77DSqjhrYCApxvISfTGgPKTZBQ0CIQC0H4RaQKWpPZVQIXjaauJv4wbg" +
-            "sZHLPIimUrhmoGkZWwIgCTSI2AtBy9zgPos/1A9Seq6P6haLOzwQ0b8xg9W1iWkCIEZpZ6CsUtYU" +
-            "x9CaNRcU302jruWZJIgRMs3p2kHsBQmvAiEA7OaHNyqMruM/jCKhnc8bD9bA7+N1tb14IElJqUavLGY=";
+    private static final String PRIVATE_KEY = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJvJzknlroeIOBY1C9ILl4n+z9PW" +
+            "dM3DCRbhDNPLAFkp2fX+43MBO7sfFOin8b5UySWfmyilrSfdsEw3B3ZCR4+JvX0D0+BCfwUezmtw" +
+            "z4LeM5S6c3JUxG6pyxVXaZwN9HH2XrxP+r9e2DymNDmwNh53RxD0LSl9/Na3HdIBPzNzAgMBAAEC" +
+            "gYEAmtDp2DYQQ0/zrN36aTpr1g8LqZEtcm2n0rzDapYKOpGEsRokHl3TZhl1Rd/gNS08187M+o/q" +
+            "i/ua/6KQH82uHj8aZrOQeaJT0sk6o6p7urij2y+7TyUMtmzFBf2O3dHBGQvTjutxturxrp0ii4F+" +
+            "tnVUfFKBIc3CtJLuvmtNRAECQQDhCGkrhpn/a8YBELpmD7JJ9xl6/Q5LjvuiqfBXzrmYfVCVqvYO" +
+            "u54tgl9m05Axczu9TIcjEjHW6NbEudIGb7GzAkEAsToB5buAvXjb8qOShPs6D/sfQULC3//qO6Fe" +
+            "mNI3RAFi7D2PGlh/QpjGVAhsORGYNy8j/9gAnnnH008lZGQXQQJAKTfFK7fH1UUES4Wo3rDZUzrz" +
+            "a9eWGrjh1nWSFENFM20gqYla8G/lFSjgGJF/w877jjzKM95NSrPzQq1Wjt8+iQJAFnxQn1Ax3lhG" +
+            "N7vPLDYfwMVQytvok7kJg/VOZj9NqcAvR9/rlyEhTFbL2v+Sk48K6/18KMrEEVdMJiBFkz4rwQJB" +
+            "AL1/gyo+cYKGJo2Og3fohHzmycxbITjahyK98AeD3oS+ZjO6HReb2ZAnHTQMcxarhUujUu/lAGYf" +
+            "5AHAxHa7apo=";
 
     @RequestMapping(method = RequestMethod.POST,value = "/submitLogin.do")
     @ResponseBody
@@ -50,9 +57,11 @@ public class LoginController extends BaseController {
         String newPwd = null;
         logger.info("客户端密码：" + password);
         try{
-            newPwd = password.replace("%2B","+");
-            logger.info("客户端处理后的密码：" + newPwd);
-            newPwd = RSAUtils.decrypt(newPwd,PRIVATE_KEY);
+            password = password.replace("%2B","+");
+            logger.info("客户端处理后的密码：" + password);
+            //RSAPrivateKey privateKey = RSAUtils.getPrivateKey(PRIVATE_KEY);
+            newPwd = RSAUtils.decrypt(password,PRIVATE_KEY);
+            //newPwd = RSAUtils.decryptByPrivateKey(password,privateKey);
             logger.info("明文是：" + newPwd);
         }catch (Exception e) {
             logger.info("解密失败");

@@ -35,8 +35,14 @@ import sun.misc.BASE64Encoder;
 
 */
 @SuppressWarnings({ "restriction", "unused" })
-public class RSAUtils {  
-	
+public class RSAUtils {
+
+    private static final String MODULUSSTRING = "95701876885335270857822974167577168764621211406341574477817778908798408856077334510496515211568839843884498881589280440763139683446418982307428928523091367233376499779842840789220784202847513854967218444344438545354682865713417516385450114501727182277555013890267914809715178404671863643421619292274848317157";
+
+    private static final String PUBLICEXPONENTSTRING = "65537";
+
+    private static final String PRIVATEEXPONENTSTRING = "15118200884902819158506511612629910252530988627643229329521452996670429328272100404155979400725883072214721713247384231857130859555987849975263007110480563992945828011871526769689381461965107692102011772019212674436519765580328720044447875477151172925640047963361834004267745612848169871802590337012858580097";
+
     /**
     * 获取公钥和私钥
     * @return 返回的map中，包含公钥和私钥，可通过map.get("public")或者map.get("private")获取
@@ -50,7 +56,7 @@ public class RSAUtils {
         // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象
         KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
         // 初始化密钥对生成器，密钥大小为96-1024位
-        keyPairGen.initialize(512);
+        keyPairGen.initialize(1024);
         // 生成一个密钥对，保存在keyPair中
         KeyPair keyPair = keyPairGen.generateKeyPair();
         //得到公钥
@@ -82,6 +88,22 @@ public class RSAUtils {
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
         String outStr = Base64.encodeBase64String(cipher.doFinal(data.getBytes("UTF-8")));
         return outStr;
+    }
+
+    //将base64编码后的公钥字符串转成PublicKey实例
+    public static RSAPublicKey getPublicKey(String publicKey) throws Exception{
+        byte[ ] keyBytes=Base64.decodeBase64(publicKey.getBytes());
+        X509EncodedKeySpec keySpec=new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory=KeyFactory.getInstance("RSA");
+        return (RSAPublicKey)keyFactory.generatePublic(keySpec);
+    }
+
+    //将base64编码后的私钥字符串转成PrivateKey实例
+    public static RSAPrivateKey getPrivateKey(String privateKey) throws Exception{
+        byte[ ] keyBytes=Base64.decodeBase64(privateKey.getBytes());
+        PKCS8EncodedKeySpec keySpec=new PKCS8EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory=KeyFactory.getInstance("RSA");
+        return (RSAPrivateKey)keyFactory.generatePrivate(keySpec);
     }
 
     /**

@@ -95,8 +95,9 @@
             return false;
         }
         var encrypt = new JSEncrypt();
-        encrypt.setPublicKey("MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKxo5a4/U+BOoKgPasR3S1RM6fNw" +
-            "Qwrh1XTS45iLMYH8hw7Z+bWrXh10IRoBjdKyUk1ep1khO+ikr3R9APz4EJ8CAwEAAQ==");
+        encrypt.setPublicKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbyc5J5a6HiDgWNQvSC5eJ/s/T1nTNwwkW4QzT" +
+            "ywBZKdn1/uNzATu7HxTop/G+VMkln5sopa0n3bBMNwd2QkePib19A9PgQn8FHs5rcM+C3jOUunNy" +
+            "VMRuqcsVV2mcDfRx9l68T/q/Xtg8pjQ5sDYed0cQ9C0pffzWtx3SAT8zcwIDAQAB");
         var enpwd = encrypt.encrypt(password);
         var pwd = encodeURI(enpwd).replace(/\+/g, '%2B');
         var data = {username:username,password:pwd,rememberMe:$("#rememberMe").is(':checked')};
