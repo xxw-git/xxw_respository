@@ -1,6 +1,8 @@
-package com.lc.xxw;
+package com.lc.xxw.TestUserInfo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.service.UserService;
@@ -41,6 +43,13 @@ public class UserServiceTest {
         user.setSfzh("123456");
         JSONObject obj = userService.save(user);
         log.info(obj.getString("message"));
+    }
+
+    @Test
+    public void testUserPage(){
+        PageInfo<User> pageInfo = userService.findByPage(1,10);
+        log.info(pageInfo.getList().size());
+        log.info("共" + pageInfo.getTotal() +"条数据。");
     }
 
 }

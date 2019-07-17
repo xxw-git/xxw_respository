@@ -1,13 +1,17 @@
 package com.lc.xxw.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.ISelect;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.lc.xxw.common.utils.CommonUtils;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.mapper.UserMapper;
 import com.lc.xxw.service.UserService;
-import com.lc.xxw.shiro.ShiroUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
@@ -19,8 +23,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    /**
+     * 分页查询
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    public PageInfo<User> findByPage(int currentPage, int pageSize){
+        PageInfo<User> pageInfo = PageHelper.startPage(currentPage,pageSize).doSelectPageInfo(
+                new ISelect() {
+                    @Override
+                    public void doSelect() {
+                        selectAll();
+                    }
+                }
+        );
+        return pageInfo;
+    }
+
     public List<User> selectAll() {
-        return userMapper.selectAll();
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        example.orderBy("createTime").desc();
+        return userMapper.selectByExample(example);
     }
 
     public Set<String> findRolesByUserId(String userId){

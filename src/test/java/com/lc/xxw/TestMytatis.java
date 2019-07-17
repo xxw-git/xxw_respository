@@ -30,7 +30,7 @@ public class TestMytatis {
     @Test
     public void  test(){
        List<User> list =  userService.selectAll();
-       log.info("查询结果为：" + list.size());
+       log.info("查询结果为：" + list.get(0).getLoginAccount());
 
     }
 

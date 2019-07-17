@@ -1,12 +1,22 @@
 package com.lc.xxw.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.lc.xxw.entity.User;
 
 import java.util.List;
 import java.util.Set;
 
 public interface UserService {
+
+    /**
+     * 分页查询
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    PageInfo<User> findByPage(int currentPage, int pageSize);
     /**
      * 查询所有人员
      * @return
