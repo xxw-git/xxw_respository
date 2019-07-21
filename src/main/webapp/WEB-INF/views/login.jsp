@@ -104,7 +104,7 @@
         var load = layer.load();
 
         $.ajax({
-            url:"/web/submitLogin.do",
+            url:"/web/submitLogin",
             data:data,
             type:"post",
             dataType:"json",
@@ -116,7 +116,7 @@
                 if(result && result.status == 200){
                     layer.msg(result.message);
                     setTimeout(function(){
-                        window.location.href= "/web/index.do";
+                        window.location.href= "/web/index";
                     },1000)
                 }else{
                     layer.alert(result.message, {icon: 5});

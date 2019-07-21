@@ -15,6 +15,9 @@
     <!-- 扩充了注解驱动，可以将请求参数绑定到控制器参数 -->
     <mvc:annotation-driven/>
 
+    <!-- 静态资源请求转发 -->
+    <mvc:default-servlet-handler/>
+
     <!-- proxy-target-class等于true是强制使用cglib代理，proxy-target-class默认是false，如果你的类实现了接口 就走JDK代理，如果没有，走cglib代理  -->
     <!-- 注：对于单利模式建议使用cglib代理，虽然JDK动态代理比cglib代理速度快，但性能不如cglib -->
     <aop:aspectj-autoproxy proxy-target-class="true"/>
@@ -58,11 +61,16 @@
         <property name="suffix" value=".jsp" />
     </bean>
 
+    <!-- swagger 配置  -->
+    <bean class="com.lc.xxw.swagger.Swagger2Config"/>
+
     <!-- 静态资源处理  css js images -->
-    <mvc:resources location="/images/" mapping="/images/**"/>
-    <mvc:resources location="/css/" mapping="/css/**"/>
-    <mvc:resources location="/js/" mapping="/js/**"/>
-    <mvc:resources location="/fonts/" mapping="/fonts/**"/>
+    <mvc:resources location="/images/" mapping="/images/**" cache-period="31556926"/>
+    <mvc:resources location="/css/" mapping="/css/**" cache-period="31556926"/>
+    <mvc:resources location="/js/" mapping="/js/**" cache-period="31556926"/>
+    <mvc:resources location="/fonts/" mapping="/fonts/**" cache-period="31556926"/>
+    <mvc:resources location="/layui/" mapping="/layui/**" cache-period="31556926"/>
+    <mvc:resources location="/swagger/" mapping="/swagger/**" cache-period="31556926"/>
 
 
 

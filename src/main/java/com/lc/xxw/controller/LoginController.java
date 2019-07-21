@@ -8,15 +8,15 @@ import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.service.UserService;
 import com.lc.xxw.shiro.ShiroUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.interfaces.RSAPrivateKey;
@@ -24,8 +24,10 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 
+
 @Controller
 @RequestMapping("/")
+@Api(value = "用户登录", description="用户登录")
 public class LoginController extends BaseController {
 
     @Autowired
@@ -47,10 +49,12 @@ public class LoginController extends BaseController {
             "AL1/gyo+cYKGJo2Og3fohHzmycxbITjahyK98AeD3oS+ZjO6HReb2ZAnHTQMcxarhUujUu/lAGYf" +
             "5AHAxHa7apo=";
 
-    @RequestMapping(method = RequestMethod.POST,value = "/submitLogin.do")
+    @ApiOperation(notes = "用户登录验证",value = "用户登录验证")
+    @RequestMapping(method = RequestMethod.POST,value = "/submitLogin")
     @ResponseBody
-    public JSONObject login(@RequestParam("username")String username, @RequestParam("password")String password,
-            @RequestParam("rememberMe")boolean rememberMe){
+    public JSONObject login(@ApiParam(value = "用户账号",name = "username",required = true) @RequestParam("username")String username,
+                            @ApiParam(value = "用户密码",name = "password",required = true)@RequestParam("password")String password,
+                            @ApiParam(value = "记住我",name = "rememberMe")@RequestParam("rememberMe")boolean rememberMe){
         JSONObject object = new JSONObject();
         // 1.获取Subject主体对象
         Subject subject = SecurityUtils.getSubject();
@@ -160,7 +164,7 @@ public class LoginController extends BaseController {
      * 首页
      * @return
      */
-    @RequestMapping(value = "/index.do")
+    @RequestMapping(value = "/index")
     public String index(){
         return "index";
     }
@@ -169,7 +173,7 @@ public class LoginController extends BaseController {
      * 权限不足
      * @return
      */
-    @RequestMapping(value = "/unauthorized.do")
+    @RequestMapping(value = "/unauthorized")
     public String unauthorized(){
         return "unauthorized";
     }
@@ -178,7 +182,7 @@ public class LoginController extends BaseController {
      * 错误页面
      * @return
      */
-    @RequestMapping(value = "/error.do")
+    @RequestMapping(value = "/error")
     public String error(){
         return "error";
     }

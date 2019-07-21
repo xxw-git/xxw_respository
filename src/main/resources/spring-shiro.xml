@@ -35,9 +35,9 @@
         <!-- 身份认证失败，则跳转到登录页面的配置 -->
         <property name="loginUrl" value="/login" />
         <!-- 身份认证成功，则跳转到系统首页 -->
-        <property name="successUrl" value="/index.do" />
+        <property name="successUrl" value="/index" />
         <!-- 权限认证失败，则跳转到指定页面 -->
-        <property name="unauthorizedUrl" value="/unauthorized.do" />
+        <property name="unauthorizedUrl" value="/unauthorized" />
         <property name="filters">
             <map>
                 <!--退出过滤器-->
@@ -54,12 +54,15 @@
                 /css/** = anon
                 /fonts/** = anon
                 /images/** = anon
+                /swagger/** = anon
                 <!--过滤静态资源 css、fonts、images-->
                 <!--/public/** = anon-->
                 /js/** = anon
+                /layui/** = anon
                 /*.ico = anon
                 /login.jsp = anon
-                /submitLogin.do = anon
+                /submitLogin = anon
+                /v2/api-docs = anon
                 <!-- 请求logout.action地址，shiro去清除session -->
                 /logout=logout
                 <!--authc表示需要认证 没有进行身份认证是不能进行访问的-->
