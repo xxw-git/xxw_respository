@@ -113,13 +113,13 @@
             },
             success:function(result){
                 layer.close(load);
-                if(result && result.status == 200){
-                    layer.msg(result.message);
+                if(result && result.code == 200){
+                    layer.msg(result.msg);
                     setTimeout(function(){
                         window.location.href= "/web/index";
                     },1000)
                 }else{
-                    layer.alert(result.message, {icon: 5});
+                    layer.alert(result.msg, {icon: 5});
                     $('#password').val('');
                     return;
                 }

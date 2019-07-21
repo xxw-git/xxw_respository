@@ -1,9 +1,10 @@
 package com.lc.xxw.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.lc.xxw.common.utils.RSAUtils;
 import com.lc.xxw.common.utils.ReadProperties;
 import com.lc.xxw.common.utils.RedisUtils;
+import com.lc.xxw.common.utils.ResultUtil;
+import com.lc.xxw.common.vo.ResultVo;
 import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.service.UserService;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.security.interfaces.RSAPrivateKey;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -52,10 +52,9 @@ public class LoginController extends BaseController {
     @ApiOperation(notes = "用户登录验证",value = "用户登录验证")
     @RequestMapping(method = RequestMethod.POST,value = "/submitLogin")
     @ResponseBody
-    public JSONObject login(@ApiParam(value = "用户账号",name = "username",required = true) @RequestParam("username")String username,
-                            @ApiParam(value = "用户密码",name = "password",required = true)@RequestParam("password")String password,
-                            @ApiParam(value = "记住我",name = "rememberMe")@RequestParam("rememberMe")boolean rememberMe){
-        JSONObject object = new JSONObject();
+    public ResultVo login(@ApiParam(value = "用户账号",name = "username",required = true) @RequestParam("username")String username,
+                          @ApiParam(value = "用户密码",name = "password",required = true)@RequestParam("password")String password,
+                          @ApiParam(value = "记住我",name = "rememberMe")@RequestParam("rememberMe")boolean rememberMe){
         // 1.获取Subject主体对象
         Subject subject = SecurityUtils.getSubject();
         String newPwd = null;
@@ -80,38 +79,30 @@ public class LoginController extends BaseController {
             logger.info(subject);
             redisUtils.delete(username);
             logger.info("------------------身份认证成功-------------------");
-            object.put("status", 200);
-            object.put("message", "登录成功！");
+            return ResultUtil.success("登录成功");
         } catch (LockedAccountException dax) {
             logger.info("账号为:" + username + " 用户已经被禁用！");
-            object.put("status", 500);
-            object.put("message", "帐号已被禁用！");
+            return ResultUtil.error("帐号已被禁用！");
         } catch (ExcessiveAttemptsException eae) {
             logger.info("账号为:" + username + " 用户登录次数过多，有暴力破解的嫌疑！");
-            object.put("status", 500);
-            object.put("message", "登录次数过多！");
+            return ResultUtil.error("登录次数过多！");
         }catch (AccountException ae) {
             logger.info("账号为:" + token.getPrincipal() + " 帐号或密码错误！");
             String excessiveInfo = ExcessiveAttemptsInfo(username);
             if(null!=excessiveInfo){
-                object.put("status", 500);
-                object.put("message", excessiveInfo);
+                return ResultUtil.error(excessiveInfo);
             }else{
-                object.put("status", 500);
-                object.put("message", "帐号或密码错误！");
+                return ResultUtil.error("帐号或密码错误！");
             }
         } catch (AuthenticationException ae) {
             logger.error(ae);
             logger.info("------------------身份认证失败-------------------");
-            object.put("status", 500);
-            object.put("message", "身份认证失败！");
+            return ResultUtil.error("身份认证失败！");
         } catch (Exception e) {
             logger.error(e);
             logger.info("未知异常信息。。。。");
-            object.put("status", 500);
-            object.put("message", "登录认证错误！");
+            return ResultUtil.error("登录认证错误！");
         }
-        return object;
     }
 
     /**

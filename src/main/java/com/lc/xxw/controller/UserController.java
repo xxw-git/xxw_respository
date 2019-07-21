@@ -1,13 +1,15 @@
 package com.lc.xxw.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import com.lc.xxw.common.utils.ResultUtil;
+import com.lc.xxw.common.vo.ResultVo;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @description: 用户管理
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/user")
+@Api(value = "用户管理",description = "用户管理")
 public class UserController extends BaseController {
 
     @Autowired
@@ -24,17 +27,14 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/save.do",method = RequestMethod.POST)
     @ResponseBody
-    public void save(@RequestBody User user){
-        HttpServletResponse response = getResponse();
-        JSONObject obj = new JSONObject();
+    @ApiOperation(value = "保存用户信息",notes = "保存用户信息")
+    public ResultVo save(@RequestBody User user){
         try {
-            obj = userService.save(user);
-            writeJSON(response,obj);
+            userService.save(user);
+            return ResultUtil.SAVE_SUCCESS;
         }catch (Exception e){
             logger.error("操作失败",e);
-            obj.put("status",500);
-            obj.put("message","操作异常");
-            writeJSON(response,obj);
+            return ResultUtil.error("操作失败");
         }
 
     }
