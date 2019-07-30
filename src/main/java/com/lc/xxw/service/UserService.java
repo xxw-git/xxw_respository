@@ -1,22 +1,26 @@
 package com.lc.xxw.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import com.lc.xxw.common.enmus.StatusEnum;
+import com.lc.xxw.entity.PageValid;
 import com.lc.xxw.entity.User;
 
 import java.util.List;
 import java.util.Set;
 
+/**
+ *@Descripiton 用户管理Service
+ *
+ */
 public interface UserService {
 
     /**
      * 分页查询
-     * @param currentPage
-     * @param pageSize
+     * @param page
      * @return
      */
-    PageInfo<User> findByPage(int currentPage, int pageSize);
+    PageInfo<User> findByPage(PageValid page);
     /**
      * 查询所有人员
      * @return
@@ -68,5 +72,26 @@ public interface UserService {
      * @return
      */
     Boolean repeatByUserName(String userId,String account);
+
+    /**
+     * 批量删除
+     * @param id 用户id
+     * @param status
+     */
+    void updateStatus(String[] id, Byte status);
+
+    /**
+     * 根据主键查询
+     * @param id
+     * @return
+     */
+    User selectUserByPk(String id);
+
+    /**
+     * 修改用户信息
+     * @param user
+     * @return
+     */
+    int update(User user);
 
 }

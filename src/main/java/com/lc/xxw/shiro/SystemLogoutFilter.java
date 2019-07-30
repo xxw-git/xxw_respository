@@ -4,10 +4,14 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * @description: 自定义登出
@@ -32,7 +36,10 @@ public class SystemLogoutFilter extends LogoutFilter {
         //在这里执行退出系统前需要清空的数据
         Subject subject = getSubject(request, response);
         String redirectUrl = getRedirectUrl(request, response, subject);
-
+        HttpSession session = WebUtils.toHttp(request).getSession();
+        if(session.getAttribute("user") !=null){
+            session.removeAttribute("user");
+        }
         try {
             subject.logout();
         } catch (SessionException var6) {

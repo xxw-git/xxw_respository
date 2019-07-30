@@ -3,6 +3,8 @@ package com.lc.xxw.common.utils;
 import com.lc.xxw.common.enmus.ResultEnum;
 import com.lc.xxw.common.vo.ResultVo;
 
+import java.util.List;
+
 /**
  * @description:统一响应结果工具类
  * @author: xuexiaowei
@@ -24,6 +26,31 @@ public class ResultUtil {
         resultVo.setCode(ResultEnum.SUCCESS.getCode());
         resultVo.setData(object);
         return resultVo;
+    }
+
+    /**
+     * 封装 layUI 返回数据格式
+     * @param msg
+     * @param total
+     * @param data
+     * @return
+     */
+    public static ResultVo success(String msg, Integer total,List<?> data){
+        ResultVo resultVo = new ResultVo();
+        resultVo.setMsg(msg);
+        resultVo.setCode(ResultEnum.SUCCESS.getCode());
+        resultVo.setTotal(total);
+        resultVo.setData(data);
+        return resultVo;
+    }
+
+    /**
+     * 操作成功，自定义提示信息，
+     * @param count 总条数
+     * @param data 数据集合
+     */
+    public static ResultVo success(Integer count,List<?> data){
+        return success("查询成功",count,data);
     }
 
 
@@ -63,12 +90,29 @@ public class ResultUtil {
     }
 
     /**
-     * 操作有误，使用默认400错误码
+     * 操作有误
+     * @param code 错误码
+     * @param data 数据
+     */
+    public static ResultVo error(Integer code, List<?> data){
+        ResultVo resultVo = new ResultVo();
+        resultVo.setData(data);
+        resultVo.setCode(code);
+        return resultVo;
+    }
+
+    /**
+     * 操作有误，使用默认500错误码
      * @param msg 提示信息
      */
     public static ResultVo error(String msg){
         Integer code = ResultEnum.ERROR.getCode();
         return error(code,msg);
+    }
+
+    public static ResultVo error(List<?> data){
+        Integer code = ResultEnum.ERROR.getCode();
+        return error(code,data);
     }
 
 

@@ -20,5 +20,7 @@ public class ResultVo implements Serializable {
 
     private Object data;
 
+    private Integer total;
+
 
 }

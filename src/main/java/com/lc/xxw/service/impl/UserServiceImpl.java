@@ -5,7 +5,9 @@ import com.github.pagehelper.ISelect;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.lc.xxw.common.enmus.StatusEnum;
 import com.lc.xxw.common.utils.CommonUtils;
+import com.lc.xxw.entity.PageValid;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.mapper.UserMapper;
 import com.lc.xxw.service.UserService;
@@ -25,12 +27,11 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 分页查询
-     * @param currentPage
-     * @param pageSize
+     * @param page
      * @return
      */
-    public PageInfo<User> findByPage(int currentPage, int pageSize){
-        PageInfo<User> pageInfo = PageHelper.startPage(currentPage,pageSize).doSelectPageInfo(
+    public PageInfo<User> findByPage(PageValid page){
+        PageInfo<User> pageInfo = PageHelper.startPage(page.getCurrentPage(),page.getPageSize()).doSelectPageInfo(
                 new ISelect() {
                     @Override
                     public void doSelect() {
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     public List<User> selectAll() {
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
+        criteria.andNotEqualTo("status",StatusEnum.DELETE.getCode());
         example.orderBy("createTime").desc();
         return userMapper.selectByExample(example);
     }
@@ -77,6 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public Boolean repeatByUserName(String userId,String account){
+        userId = userId == null ? String.valueOf(Long.MIN_VALUE) : userId;
         List<User> list = userMapper.repeatByUserName(userId,account);
         if(CommonUtils.isEmpty(list)){
             return false;
@@ -87,12 +90,7 @@ public class UserServiceImpl implements UserService {
 
     public JSONObject save(User user){
         JSONObject result = new JSONObject();
-        Boolean isRepeat = repeatByUserName(user.getId(),user.getLoginAccount());
-        if(isRepeat){
-            result.put("status",500);
-            result.put("message","用户账号已存在。");
-            return result;
-        }
+
         if(CommonUtils.isEmpty(user.getId())){
             user.setId(CommonUtils.getUUID());
             user.setCreateTime(new Date());
@@ -106,6 +104,31 @@ public class UserServiceImpl implements UserService {
             result.put("message","保存成功。");
         }
         return result;
+    }
+
+    /**
+     * 批量删除
+     * @param ids 用户id
+     * @param status
+     */
+    @Override
+    public void updateStatus(String[] ids, Byte status){
+        for (String id: ids) {
+            User user = new User();
+            user.setId(id);
+            user.setStatus(status);
+            userMapper.updateByPrimaryKeySelective(user);
+        }
+    }
+
+    @Override
+    public User selectUserByPk(String id){
+        return userMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public int update(User user){
+        return userMapper.updateByPrimaryKeySelective(user);
     }
 
 }

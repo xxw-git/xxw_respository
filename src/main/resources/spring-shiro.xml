@@ -45,6 +45,7 @@
                 <entry key="rememberMe" value-ref="RememberMeFilter"></entry>
                 <!-- 并发登录控制过滤器,暂时关闭该功能，允许一个账户登录多个客户端 -->
                <!-- <entry key="kickout" value-ref="KickoutSessionControlFilter"/>-->
+                <entry key="userSessionFilter" value-ref="UserSessionFilter"></entry>
             </map>
         </property>
         <!-- shiro过滤器的具体配置 -->
@@ -61,20 +62,23 @@
                 /layui/** = anon
                 /*.ico = anon
                 /login.jsp = anon
-                /submitLogin = anon
                 /v2/api-docs = anon
+                /submitLogin = anon
                 <!-- 请求logout.action地址，shiro去清除session -->
                 /logout=logout
                 <!--authc表示需要认证 没有进行身份认证是不能进行访问的-->
                 /index.jsp = authc
                 <!--authc 是认证过，user是登录过，如果开启了Readmemberme功能的话，
                 user也是可以通过的，而authc通过不了,所以authc来校验一些关键操作 -->
-                /**=user,rememberMe
+                /**=user,userSessionFilter,rememberMe
             </value>
         </property>
     </bean>
 
-<!--自定义LogoutFilter,登出-->
+
+    <bean id="UserSessionFilter" class="com.lc.xxw.shiro.UserSessionFilter" />
+
+    <!--自定义LogoutFilter,登出-->
     <bean id="systemLogoutFilter" class="com.lc.xxw.shiro.SystemLogoutFilter">
         <property name="redirectUrl" value="/login"/>
     </bean>

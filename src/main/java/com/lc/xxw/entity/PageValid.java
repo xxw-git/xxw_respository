@@ -12,7 +12,7 @@ import java.util.Map;
  */
 
 @Data
-public class Page {
+public class PageValid {
 
     private static final Integer PAGE_Size = 10;
 

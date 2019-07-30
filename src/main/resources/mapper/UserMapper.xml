@@ -21,7 +21,7 @@
 	<!--查询用户名是否重复-->
 	<select id="repeatByUserName" parameterType="java.lang.String" resultType="com.lc.xxw.entity.User">
  		SELECT * FROM sys_user u
- 		WHERE u.id != #{userId} AND u.login_account=#{account}
+ 		WHERE u.id != #{userId} AND u.login_account=#{account} AND u.status !=3
  	</select>
 
 

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -46,6 +47,12 @@ public class User implements Serializable {
 
     /** 更新时间 */
     private Date updateTime;
+
+    /** 备注 **/
+    private String remark;
+
+    @Transient
+    private String roleIds;
 
 
 }

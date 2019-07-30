@@ -1,15 +1,15 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html class="x-admin-sm">
     <head>
-        <meta charset="UTF-8">
-        <title>欢迎页面-X-admin2.2</title>
-        <meta name="renderer" content="webkit">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-        <link rel="stylesheet" href="./css/font.css">
-        <link rel="stylesheet" href="./css/xadmin.css">
-        <script src="./layui/layui/layui.js" charset="utf-8"></script>
-        <script type="text/javascript" src="./js/xadmin.js"></script>
+        <title>桌面</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="${basePath}/css/font.css">
+        <link rel="stylesheet" href="${basePath}/css/xadmin.css">
+        <script src="${basePath}/layui/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="${basePath}/js/xadmin.js"></script>
         <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
         <!--[if lt IE 9]>
           <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -23,7 +23,7 @@
                     <div class="layui-card">
                         <div class="layui-card-body ">
                             <blockquote class="layui-elem-quote">欢迎管理员：
-                                <span class="x-red">test</span>！当前时间:2018-04-25 20:50:53
+                                <span class="x-red">${user.userName}</span>！当前时间:${nowTime}
                             </blockquote>
                         </div>
                     </div>

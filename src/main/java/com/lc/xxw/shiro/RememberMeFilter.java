@@ -46,16 +46,4 @@ public class RememberMeFilter extends FormAuthenticationFilter {
         return subject.isAuthenticated()||subject.isRemembered();
     }
 
-    @Override
-    protected boolean onLoginSuccess(AuthenticationToken token,Subject subject,
-                                     ServletRequest request,ServletResponse response) throws Exception{
-        //获取已登录的用户信息
-        User user = (User) subject.getPrincipal();
-        HttpServletRequest req = WebUtils.toHttp(request);
-        HttpSession session = req.getSession();
-        session.setAttribute("user",user);
-        return super.onLoginSuccess(token,subject,request,response);
-    }
-
-
 }

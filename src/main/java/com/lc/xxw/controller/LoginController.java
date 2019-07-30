@@ -1,12 +1,14 @@
 package com.lc.xxw.controller;
 
-import com.lc.xxw.common.utils.RSAUtils;
-import com.lc.xxw.common.utils.ReadProperties;
-import com.lc.xxw.common.utils.RedisUtils;
-import com.lc.xxw.common.utils.ResultUtil;
+import com.google.common.collect.Lists;
+import com.lc.xxw.common.enmus.ResultEnum;
+import com.lc.xxw.common.enmus.StatusEnum;
+import com.lc.xxw.common.utils.*;
 import com.lc.xxw.common.vo.ResultVo;
 import com.lc.xxw.constants.StatusConstants;
+import com.lc.xxw.entity.Menu;
 import com.lc.xxw.entity.User;
+import com.lc.xxw.service.MenuService;
 import com.lc.xxw.service.UserService;
 import com.lc.xxw.shiro.ShiroUtils;
 import io.swagger.annotations.Api;
@@ -17,10 +19,11 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -36,18 +39,8 @@ public class LoginController extends BaseController {
     @Autowired
     private RedisUtils redisUtils;
 
-    private static final String PRIVATE_KEY = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJvJzknlroeIOBY1C9ILl4n+z9PW" +
-            "dM3DCRbhDNPLAFkp2fX+43MBO7sfFOin8b5UySWfmyilrSfdsEw3B3ZCR4+JvX0D0+BCfwUezmtw" +
-            "z4LeM5S6c3JUxG6pyxVXaZwN9HH2XrxP+r9e2DymNDmwNh53RxD0LSl9/Na3HdIBPzNzAgMBAAEC" +
-            "gYEAmtDp2DYQQ0/zrN36aTpr1g8LqZEtcm2n0rzDapYKOpGEsRokHl3TZhl1Rd/gNS08187M+o/q" +
-            "i/ua/6KQH82uHj8aZrOQeaJT0sk6o6p7urij2y+7TyUMtmzFBf2O3dHBGQvTjutxturxrp0ii4F+" +
-            "tnVUfFKBIc3CtJLuvmtNRAECQQDhCGkrhpn/a8YBELpmD7JJ9xl6/Q5LjvuiqfBXzrmYfVCVqvYO" +
-            "u54tgl9m05Axczu9TIcjEjHW6NbEudIGb7GzAkEAsToB5buAvXjb8qOShPs6D/sfQULC3//qO6Fe" +
-            "mNI3RAFi7D2PGlh/QpjGVAhsORGYNy8j/9gAnnnH008lZGQXQQJAKTfFK7fH1UUES4Wo3rDZUzrz" +
-            "a9eWGrjh1nWSFENFM20gqYla8G/lFSjgGJF/w877jjzKM95NSrPzQq1Wjt8+iQJAFnxQn1Ax3lhG" +
-            "N7vPLDYfwMVQytvok7kJg/VOZj9NqcAvR9/rlyEhTFbL2v+Sk48K6/18KMrEEVdMJiBFkz4rwQJB" +
-            "AL1/gyo+cYKGJo2Og3fohHzmycxbITjahyK98AeD3oS+ZjO6HReb2ZAnHTQMcxarhUujUu/lAGYf" +
-            "5AHAxHa7apo=";
+    @Autowired
+    private MenuService menuService;
 
     @ApiOperation(notes = "用户登录验证",value = "用户登录验证")
     @RequestMapping(method = RequestMethod.POST,value = "/submitLogin")
@@ -63,11 +56,12 @@ public class LoginController extends BaseController {
             password = password.replace("%2B","+");
             logger.info("客户端处理后的密码：" + password);
             //RSAPrivateKey privateKey = RSAUtils.getPrivateKey(PRIVATE_KEY);
-            newPwd = RSAUtils.decrypt(password,PRIVATE_KEY);
+            newPwd = RSAUtils.decrypt(password,RSAUtils.PRIVATE_KEY);
             //newPwd = RSAUtils.decryptByPrivateKey(password,privateKey);
             logger.info("明文是：" + newPwd);
         }catch (Exception e) {
             logger.info("解密失败");
+            return ResultUtil.error("用户密码输入错误");
         }
 
         // 2.封装用户数据
@@ -78,6 +72,7 @@ public class LoginController extends BaseController {
             subject.login(token);
             logger.info(subject);
             redisUtils.delete(username);
+            getSession().setAttribute("basePath",getRequest().getContextPath());
             logger.info("------------------身份认证成功-------------------");
             return ResultUtil.success("登录成功");
         } catch (LockedAccountException dax) {
@@ -92,7 +87,7 @@ public class LoginController extends BaseController {
             if(null!=excessiveInfo){
                 return ResultUtil.error(excessiveInfo);
             }else{
-                return ResultUtil.error("帐号或密码错误！");
+                return ResultUtil.error(ResultEnum.USER_LOGIN_ERROR.getMsg());
             }
         } catch (AuthenticationException ae) {
             logger.error(ae);
@@ -144,7 +139,7 @@ public class LoginController extends BaseController {
     }
 
     /**
-     * 首页访问
+     * 登录页
      */
     @RequestMapping("/login")
     public ModelAndView home(){
@@ -152,12 +147,48 @@ public class LoginController extends BaseController {
     }
 
     /**
-     * 首页
+     * 首页菜单
      * @return
      */
     @RequestMapping(value = "/index")
-    public String index(){
+    public String index(Model model){
+        try{
+            List<Menu> allMenu = menuService.findAllMenu();
+            //一级菜单
+            List<Menu> rootMenu = Lists.newArrayList();
+            for (Menu menu : allMenu) {
+                if(StatusEnum.OK.getCode() == menu.getType()){
+                    rootMenu.add(menu);
+                }
+            }
+            for (Menu root : rootMenu) {
+                root.setSubMenu(getMenuChild(root.getId(),allMenu));
+            }
+            model.addAttribute("menuList", rootMenu);
+        }catch (Exception e){
+            logger.debug("菜单加载失败");
+        }
         return "index";
+    }
+
+    public List<Menu> getMenuChild(String id,List<Menu> menuList){
+        List<Menu> childList = Lists.newArrayList();
+        for (Menu nav : menuList) {
+            // 遍历所有节点，将所有菜单的父id与传过来的根节点的id比较
+            //相等说明：为该根节点的子节点。
+            if(nav.getParentId().equals(id)){
+                childList.add(nav);
+            }
+        }
+        for (Menu nav : childList) {
+            nav.setSubMenu(getMenuChild(nav.getId(), menuList));
+        }
+        Collections.sort(childList,Menu.order());//排序
+        if(childList.size() == 0){
+            return new ArrayList<Menu>();
+        }
+        return childList;
+
     }
 
     /**
@@ -176,6 +207,17 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/error")
     public String error(){
         return "error";
+    }
+
+    /**
+     * 首页
+     * @return
+     */
+    @RequestMapping(value = "/welcome")
+    public String welcome(Model model){
+        model.addAttribute("nowTime", DatetimeUtils.date2string(new Date(),DatetimeUtils.YYYY_MM_DD_HH_MM_SS));
+        model.addAttribute("user",getUserInfo());
+        return "welcome";
     }
 
 }

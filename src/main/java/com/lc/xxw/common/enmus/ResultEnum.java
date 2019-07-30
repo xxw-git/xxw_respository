@@ -9,7 +9,7 @@ import lombok.Getter;
 public enum ResultEnum {
 
     SUCCESS(200,"成功"),
-    ERROR(400,"失败"),
+    ERROR(500,"失败"),
 
     /* 参数错误：10001-19999 */
     PARAM_IS_INVALID(10001, "参数无效"),
