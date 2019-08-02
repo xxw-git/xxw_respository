@@ -1,22 +1,13 @@
 package com.lc.xxw.entity;
 
-import com.lc.xxw.common.enmus.StatusEnum;
 import lombok.Data;
 
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.io.Serializable;
-import java.util.Date;
 
 @Table(name="SYS_USER")
 @Data
-public class User implements Serializable {
-
-    private static final Long serializableId = 1L ;
-
-    @Id
-    private String id;
+public class User extends BaseEntity {
 
     /** 登录账号 */
     private String loginAccount;
@@ -39,20 +30,7 @@ public class User implements Serializable {
     /** 部门id */
     private String deptId;
 
-    /** 状态 */
-    private Byte status = StatusEnum.OK.getCode();
-
-    /** 创建时间 */
-    private Date createTime;
-
-    /** 更新时间 */
-    private Date updateTime;
-
-    /** 备注 **/
-    private String remark;
-
     @Transient
     private String roleIds;
-
 
 }

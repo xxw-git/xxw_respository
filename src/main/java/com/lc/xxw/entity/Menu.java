@@ -1,14 +1,10 @@
 package com.lc.xxw.entity;
 
-import com.lc.xxw.common.enmus.StatusEnum;
 import lombok.Data;
 
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,11 +15,7 @@ import java.util.List;
 
 @Data
 @Table(name = "SYS_MENU")
-public class Menu implements Serializable {
-
-    // 主键
-    @Id
-    private String id;
+public class Menu extends BaseEntity {
 
     //菜单名称
     private String menuName;
@@ -40,20 +32,11 @@ public class Menu implements Serializable {
     //菜单URL
     private String url;
 
-    //菜单状态
-    private Byte status = StatusEnum.OK.getCode();
-
     //菜单排序
     private Integer sort;
 
     //创建人
     private String createUserId;
-
-    //创建时间
-    private Date createTime;
-
-    //更新时间
-    private Date updateTime;
 
     @Transient
     private List<Menu> subMenu;

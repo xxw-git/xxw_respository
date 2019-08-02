@@ -30,6 +30,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> selectAll(){
+        Example example = new Example(Role.class);
+        example.orderBy("createTime").asc();
         return roleMapper.selectAll();
     }
 

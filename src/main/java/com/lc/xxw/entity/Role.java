@@ -1,11 +1,8 @@
 package com.lc.xxw.entity;
 
-import com.lc.xxw.common.enmus.StatusEnum;
 import lombok.Data;
 
-import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 /**
  * @description: 角色表
@@ -14,14 +11,10 @@ import java.io.Serializable;
  */
 @Table(name = "SYS_ROLE")
 @Data
-public class Role implements Serializable {
-
-    @Id
-    private String id;
+public class Role extends BaseEntity {
 
     private String name;
 
     private String description;
 
-    private Byte status = StatusEnum.OK.getCode();
 }

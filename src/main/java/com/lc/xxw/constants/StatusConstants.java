@@ -15,4 +15,7 @@ public class StatusConstants {
     /** 删除状态码 */
     public static final byte DELETE = 3;
 
+    /** 父id */
+    public static final String PID = "0";
+
 }

@@ -55,6 +55,23 @@ public class ResultUtil {
 
 
     /**
+     * 操作成功
+     * @param msg 自定义提示信息，
+     * @param data 数据集合
+     */
+    public static ResultVo success(String msg,List<?> data){
+        return success(msg,null,data);
+    }
+
+    /**
+     * 操作成功，没有提示信息，
+     * @param data 数据集合
+     */
+    public static ResultVo success(List<?> data){
+        return success(null,null,data);
+    }
+
+    /**
      * 操作成功，使用默认的提示信息
      * @param object 对象
      */
@@ -68,13 +85,6 @@ public class ResultUtil {
      */
     public static ResultVo success(String msg){
         return success(msg,null);
-    }
-
-    /**
-     * 操作成功，不返回数据
-     */
-    public static ResultVo success(){
-        return success(null);
     }
 
     /**
