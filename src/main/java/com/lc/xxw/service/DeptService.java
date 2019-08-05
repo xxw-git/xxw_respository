@@ -14,5 +14,9 @@ public interface DeptService {
 
     List<Department> selectByDept(Department dept);
 
-    void insert(Department dept);
+    void save(Department dept);
+
+    Boolean isExistDeptName(Department dept);
+
+    void deleteByPk(Byte status,String id);
 }

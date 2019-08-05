@@ -1,20 +1,24 @@
 package com.lc.xxw.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.lc.xxw.common.enmus.StatusEnum;
 import com.lc.xxw.common.utils.ResultUtil;
+import com.lc.xxw.common.utils.StringUtils;
 import com.lc.xxw.common.vo.ResultVo;
+import com.lc.xxw.constants.IconConstants;
 import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.Department;
 import com.lc.xxw.service.DeptService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description: 部门管理
@@ -30,6 +34,69 @@ public class DeptController extends BaseController {
     @Autowired
     private DeptService deptService;
 
+    private static final String DEPT_PATH = "/dept/";
+
+    /**
+     * 跳转部门列表页面
+     * @return
+     */
+    @GetMapping("/index")
+    public String index(){
+        return DEPT_PATH + "list";
+    }
+
+    /**
+     * 保存
+     * @param dept
+     * @return
+     */
+    @PostMapping("/save")
+    @ResponseBody
+    public ResultVo save(Department dept){
+        try{
+            if(StringUtils.isEmpty(dept.getName())){
+                return ResultUtil.error("请输入部门名称");
+            }
+            if(!deptService.isExistDeptName(dept)){
+                return ResultUtil.error("部门名称已存在");
+            }
+            deptService.save(dept);
+            return ResultUtil.success("保存成功");
+        }catch (Exception e){
+            logger.error("部门信息保存失败");
+            return ResultUtil.error("操作失败");
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResultVo delete(@PathVariable String id){
+        if(StringUtils.isEmpty(id)){
+            return ResultUtil.error("请选择要删除的部门");
+        }
+        deptService.deleteByPk(StatusEnum.DELETE.getCode(),id);
+        return ResultUtil.success("删除功能");
+    }
+
+    /**
+     * 拖拽节点
+     * @param dept
+     * @return
+     */
+    @PostMapping("/onDrag")
+    @ResponseBody
+    public ResultVo onDrag(Department dept){
+        try{
+            if(StringUtils.isEmpty(dept.getId())){
+                return ResultUtil.error("操作失败");
+            }
+            deptService.save(dept);
+            return ResultUtil.success("操作成功");
+        }catch (Exception e){
+            return ResultUtil.error("操作失败。");
+        }
+    }
+
     /**
      * 获取tree
      * @return
@@ -41,7 +108,8 @@ public class DeptController extends BaseController {
         try {
             List<Department> allList = deptService.selectByDept(new Department());
             for (Department root : allList) {
-                if(StatusConstants.PID.equals(root.getParentId())){
+                if(StatusConstants.PID.equals(root.getPId())){
+                    root.setIcon(IconConstants.BASE_PATH + IconConstants.ICON_PATH + root.getIcon());
                     rootList.add(root);
                 }
             }
@@ -60,11 +128,12 @@ public class DeptController extends BaseController {
     private List<Department> getChildren(String id, List<Department> allList) {
         List<Department> children = Lists.newArrayList();
         for (Department dept: allList) {
-            if(dept.getParentId().equals(id)){
+            if(dept.getPId().equals(id)){
                 children.add(dept);
             }
         }
         for (Department dept : children) {
+            dept.setIcon(IconConstants.BASE_PATH + IconConstants.ICON_PATH + dept.getIcon());
             dept.setChildren(getChildren(dept.getId(), allList));
         }
         if(children.size() == 0){

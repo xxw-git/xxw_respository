@@ -10,6 +10,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import redis.clients.jedis.Jedis;
 
 /**
@@ -19,6 +20,7 @@ import redis.clients.jedis.Jedis;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @ContextConfiguration(locations = {"classpath*:/applicationContext.xml",
         "classpath:spring-redis.xml"})
 public class TestJedisClient {

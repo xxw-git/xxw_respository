@@ -1,12 +1,15 @@
 package com.lc.xxw;
 
 import com.lc.xxw.common.utils.ReadProperties;
+import com.lc.xxw.constants.IconConstants;
+import com.lc.xxw.constants.StaticPathConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Properties;
 
@@ -17,6 +20,7 @@ import java.util.Properties;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
 @ContextConfiguration(locations = {"classpath*:/applicationContext.xml",
         "classpath:spring-redis.xml"})
 public class TestReadProperties {
@@ -24,7 +28,7 @@ public class TestReadProperties {
 
     @Test
     public void testReadProperties(){
-        Properties pro = ReadProperties.getProperties();
-        log.info("登录次数为：" + pro.getProperty("login.count"));
+        log.info("ICON_PATH为：" + IconConstants.ICON_PATH);
+       // log.info("登录次数为：" + IconConstants.BASE_PATH + IconConstants.ICON_PATH + value);
     }
 }

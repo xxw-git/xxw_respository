@@ -27,7 +27,7 @@ public class BaseController {
      * 获取request
      * @return
      */
-    public HttpServletRequest getRequest() {
+    public static HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 
@@ -35,7 +35,7 @@ public class BaseController {
      * 获取response
      * @return
      */
-    public HttpServletResponse getResponse() {
+    public static HttpServletResponse getResponse() {
         return  ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
     }
 
@@ -43,7 +43,7 @@ public class BaseController {
      * 获取session
      * @return
      */
-    public HttpSession getSession(){
+    public static HttpSession getSession(){
         return getRequest().getSession();
     }
 

@@ -92,7 +92,7 @@
                     <c:forEach var="subSubList" items="${subList.subMenu}">
                     <ul class="sub-menu">
                         <li>
-                            <a onclick="xadmin.add_tab('<c:out value='${subSubList.menuName}'/>','<c:out value='${subSubList.url}'/>')">
+                            <a onclick="xadmin.add_tab('<c:out value='${subSubList.menuName}'/>','<c:out value='${basePath}${subSubList.url}'/>')">
                                 <i class="iconfont">&#xe6a7;</i>
                                 <cite>${subSubList.menuName}</cite></a>
                         </li>

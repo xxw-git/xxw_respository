@@ -5,6 +5,7 @@ import com.lc.xxw.common.enmus.ResultEnum;
 import com.lc.xxw.common.enmus.StatusEnum;
 import com.lc.xxw.common.utils.*;
 import com.lc.xxw.common.vo.ResultVo;
+import com.lc.xxw.constants.StaticPathConstants;
 import com.lc.xxw.constants.StatusConstants;
 import com.lc.xxw.entity.Menu;
 import com.lc.xxw.entity.User;
@@ -41,6 +42,8 @@ public class LoginController extends BaseController {
 
     @Autowired
     private MenuService menuService;
+
+
 
     @ApiOperation(notes = "用户登录验证",value = "用户登录验证")
     @RequestMapping(method = RequestMethod.POST,value = "/submitLogin")
@@ -111,8 +114,7 @@ public class LoginController extends BaseController {
         userName.append("ExcessiveCount");
         String accountKey = userName.toString();
 
-        Properties pro = ReadProperties.getProperties();
-        String loginCount = pro.getProperty("login.count");
+        String loginCount = ReadProperties.getProperValueBykey(StaticPathConstants.SYSTEM_INFO_PATH,"login.count");
 
         if(null == redisUtils.get(accountKey)){
             //过期时间设置30分钟
