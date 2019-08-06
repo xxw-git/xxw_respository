@@ -66,7 +66,7 @@ public class UserController extends BaseController {
                 page.setPageSize(Integer.valueOf(param.get("limit").toString()));
             }
             PageInfo<User> pageInfo = userService.findByPage(page);
-            return ResultUtil.success(Integer.valueOf(pageInfo.getTotal()+""),pageInfo.getList());
+            return ResultUtil.success(pageInfo.getTotal(),pageInfo.getList());
         }catch (Exception e){
             return ResultUtil.error("");
         }
@@ -210,7 +210,7 @@ public class UserController extends BaseController {
     @ResponseBody
     public ResultVo roleList(){
         List<Role> roleList = roleService.selectAll();
-        return ResultUtil.success(roleList.size(),roleList);
+        return ResultUtil.success(Long.valueOf(roleList.size()),roleList);
     }
 
 }

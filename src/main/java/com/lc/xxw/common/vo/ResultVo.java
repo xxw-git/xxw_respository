@@ -12,15 +12,13 @@ import java.io.Serializable;
 @Data
 public class ResultVo implements Serializable {
 
-    private static final long serialVersionUID = -3948389268046368059L;
-
     private Integer code;
 
     private String msg;
 
     private Object data;
 
-    private Integer total;
+    private Long total;
 
 
 }

@@ -57,6 +57,7 @@ var setting = {
         beforeDragOpen: beforeDragOpen,//用于捕获拖拽节点移动到折叠状态的父节点后，即将自动展开该父节点之前的事件回调函数，并且根据返回值确定是否允许自动展开操作
         onDrag: onDrag,//用于捕获节点被拖拽的事件回调函数
         onDrop: onDrop,//用于捕获节点拖拽操作结束的事件回调函数
+        onClick: zTreeOnClick,//单击事件回调函数
     }
 };
 
@@ -326,4 +327,75 @@ function onDrop(event, treeId, treeNodes, targetNode, moveType, isCopy){
 function beforeDragOpen(treeId,treeNode) {
     autoExpandNode = treeNode;
     return true;
+}
+
+function zTreeOnClick(event, treeId, treeNode) {
+    var deptId = treeNode.id;
+    console.log(deptId);
+    getMemberData(deptId)
+    /*$.ajax({
+        type:'get',
+        url: _basePath + '/sys/dept/getDeptMember',
+        data:{"id":deptId},
+        async: false,
+        success: function (data) {
+            if(data.code == 200){
+                layer.msg('操作成功',{icon:6,time:1000});
+                onLoadZTree();
+            } else {
+                layer.msg(data.msg,{icon:5,time:1000});
+            }
+        },
+        error: function (e) {
+            console.log(e);
+            layer.msg('请求异常!',{icon:5});
+        }
+    });*/
+}
+
+function getMemberData(deptId){
+    layui.use(['table','form'], function(){
+        var table = layui.table;
+
+        table.render({
+            id:'userId',
+            elem: '#deptTable',
+            method:'get',//接口http请求类型，默认:get
+            url: _basePath + '/sys/dept/getDeptMember',
+            //contentType:'application/json',//发送到服务端的内容编码类型。如设置json格式类型application/json
+            where:{deptId: deptId},//接口的其它参数。如：where:
+            title: '部门成员',
+            request: {
+                pageName: 'currentPage', //页码的参数名称，默认：page
+                limitName: 'limit' //每页数据量的参数名，默认：limit
+            },
+            cols: [[
+                {type: 'numbers',width:70,title:'序号'},
+                {hide:true,field:'id',title:'主键'},
+                {field:'userName', title:'用户名', sort: true},
+                {field:'sfzh', title:'身份证号',  sort: true},
+                {field:'lxfs', title:'手机号',sort: true},
+                {field:'deptId', title:'所属部门', sort: true},
+            ]]
+            ,page: true//开启分页
+            ,limit:10//默认一页显示十条数据
+            ,limits:[10,20,30,50]
+            ,text: {
+                none: '暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+            },
+            //重新规定返回的数据格式
+            response:{
+                statusCode:200,//自定义成功的状态码，默认：0
+                countName: 'total' //规定数据总数的字段名称，默认：count
+            },
+            parseData:function (result) {//result 即为原始返回的数据
+                return{
+                    "code":result.code,//解析接口状态
+                    "msg":result.msg,//解析提示文本
+                    "total": result.total, //解析数据长度
+                    "data": result.data //解析数据列表
+                };
+            }
+        });
+    });
 }

@@ -2,11 +2,11 @@ package com.lc.xxw.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.lc.xxw.common.enmus.StatusEnum;
 import com.lc.xxw.entity.PageValid;
 import com.lc.xxw.entity.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,7 +25,7 @@ public interface UserService {
      * 查询所有人员
      * @return
      */
-    List<User> selectAll();
+    List<User> selectAll(Map<String,Object> param);
 
     /**
      * 根据用户Id查找角色

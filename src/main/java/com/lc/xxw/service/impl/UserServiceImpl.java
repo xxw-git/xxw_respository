@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lc.xxw.common.enmus.StatusEnum;
 import com.lc.xxw.common.utils.CommonUtils;
+import com.lc.xxw.common.utils.StringUtils;
 import com.lc.xxw.entity.PageValid;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.mapper.UserMapper;
@@ -17,6 +18,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service("userService")
@@ -35,35 +37,43 @@ public class UserServiceImpl implements UserService {
                 new ISelect() {
                     @Override
                     public void doSelect() {
-                        selectAll();
+                        selectAll(page.getFilterMap());
                     }
                 }
         );
         return pageInfo;
     }
 
-    public List<User> selectAll() {
+    @Override
+    public List<User> selectAll(Map<String,Object> param) {
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.isNotEmpty(param.get("deptId").toString())){
+            criteria.andEqualTo("deptId",param.get("deptId"));
+        }
         criteria.andNotEqualTo("status",StatusEnum.DELETE.getCode());
         example.orderBy("createTime").desc();
         return userMapper.selectByExample(example);
     }
 
+    @Override
     public Set<String> findRolesByUserId(String userId){
         return userMapper.findRolesByUserId(userId);
     }
 
+    @Override
     public Set<String> findPermissions(String userId){
         return userMapper.findPermissionsByUserId(userId);
     }
 
+    @Override
     public User findUserByUsername(String account){
         User user = new User();
         user.setLoginAccount(account);
         return userMapper.selectOne(user);
     }
 
+    @Override
     public User login(String account,String password){
         User user = new User();
         user.setLoginAccount(account);
@@ -71,6 +81,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectOne(user);
     }
 
+    @Override
     public int updateDisabled(String id,Byte status){
         User user = new User();
         user.setId(id);
@@ -78,6 +89,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateByPrimaryKey(user);
     }
 
+    @Override
     public Boolean repeatByUserName(String userId,String account){
         userId = userId == null ? String.valueOf(Long.MIN_VALUE) : userId;
         List<User> list = userMapper.repeatByUserName(userId,account);
@@ -88,6 +100,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public JSONObject save(User user){
         JSONObject result = new JSONObject();
 

@@ -1,6 +1,7 @@
 package com.lc.xxw.service;
 
 import com.lc.xxw.entity.Department;
+import com.lc.xxw.entity.PageValid;
 
 import java.util.List;
 
@@ -19,4 +20,5 @@ public interface DeptService {
     Boolean isExistDeptName(Department dept);
 
     void deleteByPk(Byte status,String id);
+
 }

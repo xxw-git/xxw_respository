@@ -56,20 +56,52 @@
 </div>
 <div class="layui-fluid" style="background: #fff;">
     <div class="layui-row">
-        <div class="layui-col-xs6">
+        <div class="layui-col-md3">
             <div id="layer-zTree"  >
                 <div>
-                    <ul id="ztree" class="ztree" style="width: 40%;height: 80%;"></ul>
+                    <ul id="ztree" class="ztree" style="width: 75%;height: 80%;"></ul>
                 </div>
             </div>
         </div>
-        <div class="layui-col-xs6">
-            <div>
-            <span>这是列表区域</span>
-            </div>
+        <div class="layui-col-md9">
+            <fieldset class="layui-elem-field">
+                <legend>部门属性</legend>
+                <hr class="layui-bg-gray">
+                <div class="layui-field-box">
+                    <div class="layui-row">
+                        <div class="layui-col-xs4">
+                            <label class="layui-form-label" style="font-size: 16px;text-align: left;padding: 5px;">部门名称：</label>
+                            <div class="layui-form-label" style="font-size: 16px;padding: 5px;width: 120px;">
+                                郑州市公安局
+                            </div>
+                        </div>
+                        <div class="layui-col-xs4">
+                            <label class="layui-form-label" style="font-size: 16px;text-align: left;padding: 5px;">部门全称：</label>
+                            <div class="layui-form-label" style="font-size: 16px;padding: 5px;width: 120px;">
+                                郑州市公安局
+                            </div>
+                        </div>
+                        <div class="layui-col-xs4">
+                            <label class="layui-form-label" style="font-size: 16px;text-align: left;padding: 5px;">上级部门：</label>
+                            <div class="layui-form-label" style="font-size: 16px;padding: 5px;width: 120px;">
+                                河南省公安厅
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="layui-elem-field" style="margin-top: 50px;">
+                <legend> 部门成员</legend>
+                <hr class="layui-bg-gray">
+                <div class="layui-field-box">
+                    <table id="deptTable" class="layui-table" lay-filter="list"></table>
+                </div>
+            </fieldset>
+
             <div class="layui-card-body">
-                <table id="deptTable" class="layui-table" lay-filter="list"></table>
             </div>
+
         </div>
     </div>
 </div>

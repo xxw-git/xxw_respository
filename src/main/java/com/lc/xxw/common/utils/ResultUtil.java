@@ -35,7 +35,7 @@ public class ResultUtil {
      * @param data
      * @return
      */
-    public static ResultVo success(String msg, Integer total,List<?> data){
+    public static ResultVo success(String msg, Long total,List<?> data){
         ResultVo resultVo = new ResultVo();
         resultVo.setMsg(msg);
         resultVo.setCode(ResultEnum.SUCCESS.getCode());
@@ -49,7 +49,7 @@ public class ResultUtil {
      * @param count 总条数
      * @param data 数据集合
      */
-    public static ResultVo success(Integer count,List<?> data){
+    public static ResultVo success(Long count,List<?> data){
         return success("查询成功",count,data);
     }
 

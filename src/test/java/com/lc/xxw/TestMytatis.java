@@ -1,5 +1,6 @@
 package com.lc.xxw;
 
+import com.google.common.collect.Maps;
 import com.lc.xxw.common.utils.RSAUtils;
 import com.lc.xxw.entity.User;
 import com.lc.xxw.service.UserService;
@@ -17,6 +18,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -31,7 +33,8 @@ public class TestMytatis {
 
     @Test
     public void  test(){
-       List<User> list =  userService.selectAll();
+        Map<String,Object> map = Maps.newHashMap();
+       List<User> list =  userService.selectAll(map);
        log.info("查询结果为：" + list.get(0).getLoginAccount());
 
     }
